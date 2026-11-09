@@ -169,6 +169,8 @@ th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: upp
   font-size: 13px;
 }
 .file-chip a { color: var(--primary); text-decoration: none; }
+a.file-chip { color: var(--primary); text-decoration: none; }
+a.file-chip:hover { border-color: var(--primary); }
 .file-chip .x { cursor: pointer; color: var(--muted); }
 .file-chip .x:hover { color: var(--danger); }
 

@@ -84,6 +84,7 @@ function renderToday() {
           <h3>🔁 ${esc(t.subjectName)}</h3>
           <div class="less">${esc(t.lessonName)}</div>
           <div class="meta">Exam coming: <b>${esc(t.examLabel)}</b> on ${fmtDate(t.examDate)} (${daysUntil(t.examDate)})</div>
+          ${fileLinks(t.files, "Open material")}
         </div>`;
       } else {
         html += `<div class="big-task" style="border-left-color:${t.color}">
@@ -94,6 +95,7 @@ function renderToday() {
             ${t.cram ? ' · <span style="color:var(--danger)">⚠ tight schedule</span>' : ""}
             <br>For <b>${esc(t.examLabel)}</b> on ${fmtDate(t.examDate)} (${daysUntil(t.examDate)})
           </div>
+          ${fileLinks(t.files, "Open study material")}
           <div style="margin-top:10px">
             <button class="btn small" onclick="markLessonDone('${t.subjectId}','${t.lessonId}')">✓ Mark lesson done</button>
           </div>
@@ -539,6 +541,22 @@ function esc(s) {
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+
+/* Render a compact set of "open material" links for a task.
+   Handles both repo files (path, open in new tab) and uploaded files
+   (base64 data URL, download). Returns "" if there are no files. */
+function fileLinks(files, label) {
+  if (!files || !files.length) return "";
+  const chips = files.map(f => {
+    const href = f.path ? esc(f.path) : f.data;
+    const attrs = f.path ? `target="_blank" rel="noopener"` : `download="${esc(f.name)}"`;
+    return `<a class="file-chip" href="${href}" ${attrs}>📎 ${esc(f.name)}</a>`;
+  }).join("");
+  return `<div style="margin-top:10px">
+    <div class="muted" style="font-size:12px;margin-bottom:4px">${esc(label || "Material")}</div>
+    <div>${chips}</div>
+  </div>`;
+}
 function diffDots(n) {
   let d = "";
   for (let i = 1; i <= 5; i++) d += `<span class="dot ${i <= n ? "on" : ""}"></span>`;

@@ -188,6 +188,10 @@ function lessonTask(subject, lesson, exam, cram, partLabel) {
     examLabel: exam.label,
     examDate: exam.date,
     cram: !!cram,
+    // Material for this lesson: a file explicitly linked to the lesson if any,
+    // otherwise all of the subject's files (so the study material is one click
+    // away from the daily recommendation).
+    files: lessonFiles(subject, lesson),
   };
 }
 function reviewTask(subject, exam) {
@@ -199,7 +203,18 @@ function reviewTask(subject, exam) {
     lessonName: "Final review — go over all lessons",
     examLabel: exam.label,
     examDate: exam.date,
+    files: subject.files || [],
   };
+}
+
+/* Pick the files to show for a lesson. If the lesson has `fileIds`, show just
+   those; otherwise show all the subject's files. */
+function lessonFiles(subject, lesson) {
+  const all = subject.files || [];
+  if (lesson.fileIds && lesson.fileIds.length) {
+    return all.filter(f => lesson.fileIds.includes(f.id));
+  }
+  return all;
 }
 
 /* ---- date helpers ---- */
