@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LearnReminder — Study Planner</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">📚</span>
+      <h1>LearnReminder</h1>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-view="today">Today</button>
+      <button class="tab" data-view="plan">Study Plan</button>
+      <button class="tab" data-view="subjects">Subjects</button>
+      <button class="tab" data-view="exams">Exams</button>
+      <button class="tab" data-view="availability">Availability</button>
+      <button class="tab" data-view="settings">Settings</button>
+    </nav>
+  </header>
+
+  <main id="app">
+    <!-- TODAY -->
+    <section class="view" data-view="today">
+      <div class="view-head">
+        <h2>Today</h2>
+        <p class="muted" id="today-date"></p>
+      </div>
+      <div id="today-content"></div>
+    </section>
+
+    <!-- STUDY PLAN -->
+    <section class="view hidden" data-view="plan">
+      <div class="view-head">
+        <h2>Study Plan</h2>
+        <button class="btn primary" id="regen-plan">Regenerate plan</button>
+      </div>
+      <p class="muted">
+        The plan assigns one subject at a time (soonest exam first) and distributes its
+        lessons across your available study days. Lesson time is weighted by material length × difficulty.
+      </p>
+      <div id="plan-content"></div>
+    </section>
+
+    <!-- SUBJECTS -->
+    <section class="view hidden" data-view="subjects">
+      <div class="view-head">
+        <h2>Subjects</h2>
+        <button class="btn primary" id="add-subject">+ Add subject</button>
+      </div>
+      <div id="subjects-content"></div>
+    </section>
+
+    <!-- EXAMS -->
+    <section class="view hidden" data-view="exams">
+      <div class="view-head">
+        <h2>Exams</h2>
+        <button class="btn primary" id="add-exam">+ Add exam</button>
+      </div>
+      <p class="muted">Exam dates were pre-filled from your schedule. Edit anything that changed.</p>
+      <div id="exams-content"></div>
+    </section>
+
+    <!-- AVAILABILITY -->
+    <section class="view hidden" data-view="availability">
+      <div class="view-head">
+        <h2>Availability</h2>
+      </div>
+      <p class="muted">Choose which weekdays you can study and set daily study hours. Block specific dates you can't study at all.</p>
+      <div id="availability-content"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view hidden" data-view="settings">
+      <div class="view-head">
+        <h2>Settings</h2>
+      </div>
+      <div id="settings-content"></div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-backdrop hidden" id="modal-backdrop">
+    <div class="modal" id="modal">
+      <div class="modal-head">
+        <h3 id="modal-title">Title</h3>
+        <button class="icon-btn" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-foot" id="modal-foot"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="data.js"></script>
+  <script src="planner.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
