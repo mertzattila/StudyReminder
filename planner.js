@@ -133,18 +133,38 @@ const Planner = {
           }
         });
       } else {
-        // ---- Tight: more lessons than days. Order lessons by priority
-        // (heaviest length*difficulty first) and spread them evenly across the
-        // days so each day gets a balanced, focused batch instead of a dump. ----
-        const ordered = [...lessons].sort(
-          (a, b) =>
-            (Math.max(1, b.length) * Math.max(1, b.difficulty)) -
-            (Math.max(1, a.length) * Math.max(1, a.difficulty))
-        );
-        // Interleave so each day mixes a heavy + lighter topic rather than all
-        // heavy topics landing on day one.
+        // ---- Tight: more lessons than days. Keep lessons in their ORIGINAL
+        // order (Előadás 1, 2-3, 4 ... then Gyakorlat 1, 2 ...) and split them
+        // into consecutive chunks, one chunk per day. Heavier lessons still get
+        // more time implicitly: we balance each day by total weight (length x
+        // difficulty) while never reordering, so day boundaries fall where the
+        // accumulated workload reaches each day's fair share. ----
+        const weights = lessons.map(l => Math.max(1, l.length) * Math.max(1, l.difficulty));
+        const totalWeight = weights.reduce((a, b) => a + b, 0);
+        const perDayTarget = totalWeight / nDays;
+
+        // Greedily fill each day in order until it reaches its weight share,
+        // but guarantee every day gets at least one lesson and that there are
+        // enough lessons left for the remaining days.
         const buckets = Array.from({ length: nDays }, () => []);
-        ordered.forEach((l, i) => buckets[i % nDays].push(l));
+        let li = 0;
+        for (let di = 0; di < nDays; di++) {
+          const remainingDays = nDays - di;
+          let acc = 0;
+          // always take at least one lesson for this day
+          do {
+            buckets[di].push(lessons[li]);
+            acc += weights[li];
+            li++;
+          } while (
+            li < lessons.length &&
+            acc < perDayTarget &&
+            (lessons.length - li) > (remainingDays - 1) // leave ≥1 lesson per later day
+          );
+        }
+        // Any leftover lessons (rounding) go onto the last day, still in order.
+        while (li < lessons.length) { buckets[nDays - 1].push(lessons[li]); li++; }
+
         buckets.forEach((bucket, di) => {
           const day = candidates[di];
           const tight = bucket.length > 1;
